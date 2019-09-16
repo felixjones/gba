@@ -1,0 +1,423 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>IO Registers - Rust GBA Guide</title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li><a href="development-setup.html"><strong aria-hidden="true">1.</strong> Development Setup</a></li><li><a href="volatile.html"><strong aria-hidden="true">2.</strong> Volatile</a></li><li><a href="the-hardware-memory-map.html"><strong aria-hidden="true">3.</strong> The Hardware Memory Map</a></li><li><a href="io-registers.html" class="active"><strong aria-hidden="true">4.</strong> IO Registers</a></li><li><a href="bitmap-video.html"><strong aria-hidden="true">5.</strong> Bitmap Video</a></li><li><a href="gba-asm.html"><strong aria-hidden="true">6.</strong> GBA Assembly</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Rust GBA Guide</h1>
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1><a class="header" href="#io-registers" id="io-registers">IO Registers</a></h1>
+<p>As I said before, the IO registers are how you tell the GBA to do all the things
+you want it to do. If you want a hint at what's available, they're all listed
+out in the <a href="https://problemkaputt.de/gbatek.htm#gbaiomap">GBA I/O Map</a> section
+of GBATEK. Go have a quick look.</p>
+<p>Each individual IO register has a particular address just like we talked about
+in the Hardware Memory Map section. They also have a size (listed in bytes), and
+a note on if they're read only, write only, or read-write. Finally, each
+register has a name and a one line summary. Unfortunately for us, the names are
+all C style names with heavy shorthand. I'm not normally a fan of shorthand
+names, but the <code>gba</code> crate uses the register names from GBATEK as much as
+possible, since they're the most commonly used set of names among GBA
+programmers. That way, if you're reading other guides and they say to set the
+<code>BG2CNT</code> register, then you know exactly what register to look for within the
+<code>gba</code> docs.</p>
+<h2><a class="header" href="#register-bits" id="register-bits">Register Bits</a></h2>
+<p>There's only about 100 registers, but there's a lot more than 100 details we
+want to have control over on the GBA. How does that work? Well, let's use a
+particular register to talk about it. The first one on the list is <code>DISPCNT</code>,
+the &quot;Display Control&quot; register. It's one of the most important IO registers, so
+this is a &quot;two birds with one stone&quot; situation.</p>
+<p>Naturally there's a whole lot of things involved in the LCD that we want to
+control, and it's all &quot;one&quot; value, but that value is actually many &quot;fields&quot;
+packed into one value. When learning about an IO register, you have to look at
+its bit pattern breakdown. For <code>DISPCNT</code> the GBATEK entry looks like this:</p>
+<pre><code class="language-txt">4000000h - DISPCNT - LCD Control (Read/Write)
+  Bit   Expl.
+  0-2   BG Mode                (0-5=Video Mode 0-5, 6-7=Prohibited)
+  3     Reserved / CGB Mode    (0=GBA, 1=CGB; can be set only by BIOS opcodes)
+  4     Display Frame Select   (0-1=Frame 0-1) (for BG Modes 4,5 only)
+  5     H-Blank Interval Free  (1=Allow access to OAM during H-Blank)
+  6     OBJ Character VRAM Mapping (0=Two dimensional, 1=One dimensional)
+  7     Forced Blank           (1=Allow FAST access to VRAM,Palette,OAM)
+  8     Screen Display BG0  (0=Off, 1=On)
+  9     Screen Display BG1  (0=Off, 1=On)
+  10    Screen Display BG2  (0=Off, 1=On)
+  11    Screen Display BG3  (0=Off, 1=On)
+  12    Screen Display OBJ  (0=Off, 1=On)
+  13    Window 0 Display Flag   (0=Off, 1=On)
+  14    Window 1 Display Flag   (0=Off, 1=On)
+  15    OBJ Window Display Flag (0=Off, 1=On)
+</code></pre>
+<p>So what we're supposed to understand here is that we've got a <code>u16</code>, and then we
+set the individual bits for the things that we want. In the <code>hello_magic</code>
+example you might recall that we set this register to the value <code>0x0403</code>. That
+was a bit of a trick on my part because hex numbers usually look far more
+mysterious than decimal or binary numbers. If we converted it to binary it'd
+look like this:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+0b100_0000_0011
+#}</code></pre></pre>
+<p>And then you can just go down the list of settings to see what bits are what:</p>
+<ul>
+<li>Bits 0-2 (BG Mode) are <code>0b011</code>, so that's Video Mode 3</li>
+<li>Bit 10 (Display BG2) is enabled</li>
+<li>Everything else is disabled</li>
+</ul>
+<p>Naturally, trying to remember exactly what bit does what can be difficult. In
+the <code>gba</code> crate we attempt as much as possible to make types that wrap over a
+<code>u16</code> or <code>u32</code> and then have getters and setters <em>as if</em> all the inner bits were
+different fields.</p>
+<ul>
+<li>If it's a single bit then the getter/setter will use <code>bool</code>.</li>
+<li>If it's more than one bit and each pattern has some non-numeric meaning then
+it'll use an <code>enum</code>.</li>
+<li>If it's more than one bit and numeric in nature then it'll just use the
+wrapped integer type. Note that you generally won't get the full range of the
+inner number type, and any excess gets truncated down to fit in the bits
+available.</li>
+</ul>
+<p>All the getters and setters are defined as <code>const</code> functions, so you can make
+constant declarations for the exact setting combinations that you want.</p>
+<h2><a class="header" href="#some-important-io-registers" id="some-important-io-registers">Some Important IO Registers</a></h2>
+<p>It's not easy to automatically see what registers will be important for getting
+started and what registers can be saved to learn about later.</p>
+<p>We'll go over three IO registers here that will help us the most to get started,
+then next lesson we'll cover how that Video Mode 3 bitmap drawing works, and
+then by the end of the next lesson we'll be able to put it all together into
+something interactive.</p>
+<h3><a class="header" href="#dispcnt-display-control" id="dispcnt-display-control">DISPCNT: Display Control</a></h3>
+<p>The <a href="https://problemkaputt.de/gbatek.htm#lcdiodisplaycontrol">DISPCNT</a> register
+lets us affect the major details of our video output. There's a lot of other
+registers involved too, but it all starts here.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub const DISPCNT: VolAddress&lt;DisplayControlSetting&gt; = unsafe { VolAddress::new(0x400_0000) };
+#}</code></pre></pre>
+<p>As you can see, the display control register is, like most registers,
+complicated enough that we make it a dedicated type with getters and setters for
+the &quot;phantom&quot; fields. In this case it's mostly a bunch of <code>bool</code> values we can
+set, and also the video mode is an <code>enum</code>.</p>
+<p>We already looked at the bit listing above, let's go over what's important right
+now and skip the other bits:</p>
+<ul>
+<li>BG Mode sets how the whole screen is going to work and even how the display
+adapter is going to interpret the bit layout of video memory for pixel
+processing. We'll start with Mode 3, which is the simplest to learn.</li>
+<li>The &quot;Forced Blank&quot; bit is one of the very few bits that starts <em>on</em> at the
+start of the main program. When it's enabled it prevents the display adapter
+from displaying anything at all. You use this bit when you need to do a very
+long change to video memory and you don't want the user to see the
+intermediate states being partly drawn.</li>
+<li>The &quot;Screen Display&quot; bits let us enable different display layers. We care
+about BG2 right now because the bitmap modes (3, 4, and 5) are all treated as
+if they were drawing into BG2 (even though it's the only BG layer available in
+those modes).</li>
+</ul>
+<p>There's a bunch of other stuff, but we'll get to those things later. They're not
+relevent right now, and there's enough to learn already. Already we can see that
+when the <code>hello_magic</code> demo says</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  (0x400_0000 as *mut u16).write_volatile(0x0403);
+#}</code></pre></pre>
+<p>We could re-write that more sensibly like this</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  const SETTING: DisplayControlSetting =
+    DisplayControlSetting::new().with_mode(DisplayMode::Mode3).with_bg2(true);
+  DISPCNT.write(SETTING);
+#}</code></pre></pre>
+<h3><a class="header" href="#vcount-vertical-display-counter" id="vcount-vertical-display-counter">VCOUNT: Vertical Display Counter</a></h3>
+<p>The <a href="https://problemkaputt.de/gbatek.htm#lcdiointerruptsandstatus">VCOUNT</a>
+register lets us find out what row of pixels (called a <strong>scanline</strong>) is
+currently being processed.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub const VCOUNT: ROVolAddress&lt;u16&gt; = unsafe { ROVolAddress::new(0x400_0006) };
+#}</code></pre></pre>
+<p>You see, the display adapter is constantly running its own loop, along side the
+CPU. It starts at the very first pixel of the very first scanline, takes 4
+cycles to determine what color that pixel is, and then processes the next
+pixel. Each scanline is 240 pixels long, followed by 68 &quot;virtual&quot; pixels so that
+you have just a moment to setup for the next scanline to be drawn if you need
+it. 272 cycles (68*4) is not a lot of time, but it's enough that you could
+change some palette colors or move some objects around if you need to.</p>
+<ul>
+<li>Horizontal pixel value <code>0..240</code>: &quot;HDraw&quot;</li>
+<li>Horizontal pixel value <code>240..308</code>: &quot;HBlank&quot;</li>
+</ul>
+<p>There's no way to check the current horizontal counter, but there is a way to
+have the CPU interrupt the normal code when the HBlank period starts, which
+we'll learn about later.</p>
+<p>Once a complete scanline has been processed (including the blank period), the
+display adapter keeps going with the next scanline. Similar to how the
+horizontal processing works, there's 160 scanlines in the real display, and then
+it's followed by 68 &quot;virtual&quot; scanlines to give you time for adjusting video
+memory between the frames of the game.</p>
+<ul>
+<li>Vertical Count <code>0..160</code>: &quot;VDraw&quot;</li>
+<li>Vertical Count <code>160..228</code>: &quot;VBlank&quot;</li>
+</ul>
+<p>Once every scanline has been processed (including the vblank period), the
+display adapter starts the whole loop over again with scanline 0. A total of
+280,896 cycles per display loop (4 * 308 * 228), and about 59.59ns per CPU
+cycle, gives us a full speed display rate of 59.73fps. That's close enough to
+60fps that I think we can just round up a bit whenever we're not counting it
+down to the exact cycle timings.</p>
+<p>However, there's a bit of a snag. If we change video memory during the middle of
+a scanline the display will <em>immediately</em> start processing using the new state
+of video memory. The picture before the change and after the change won't look
+like a single, clean picture. Instead you'll get what's called &quot;<a href="https://en.wikipedia.org/wiki/Screen_tearing">screen
+tearing</a>&quot;, which is usually
+considered to be the mark of a badly programmed game.</p>
+<p>To avoid this we just need to only adjust video memory during one of the blank
+periods. If you're really cool you can adjust things during HBlank, but we're
+not that cool yet. Starting out our general program flow will be:</p>
+<ol>
+<li>Gather input for the frame (next part of this lesson) and update the game
+state, getting everything ready for when VBlank actually starts.</li>
+<li>Once VBlank starts we update all of the video memory as fast as we can.</li>
+<li>Once we're done drawing we again wait for the VDraw period to begin and then
+do it all again.</li>
+</ol>
+<p>Now, it's not the most efficient way, but to get our timings right we can just
+read from <code>VCOUNT</code> over and over in a &quot;busy loop&quot;. Once we read a value of 160
+we know that we've entered VBlank. Once it goes back to 0 we know that we're
+back in VDraw.</p>
+<p>Doing a busy loop like this actually drains the batteries way more than
+necessary. It keeps the CPU active constantly, which is what uses a fair amount
+of the power. Normally you're supposed to put the CPU to sleep if you're just
+waiting around for something to happen. However, that also requires learning
+about some more concepts to get right. So to keep things easier starting out
+we'll do the bad/lazy version and then upgrade our technique later.</p>
+<h3><a class="header" href="#keyinput-key-input-reading" id="keyinput-key-input-reading">KEYINPUT: Key Input Reading</a></h3>
+<p>The <a href="https://problemkaputt.de/gbatek.htm#gbakeypadinput">KEYINPUT</a> register is
+the last one we've got to learn about this lesson. It lets you check the status
+of all 10 buttons on the GBA.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub const KEYINPUT: ROVolAddress&lt;u16&gt; = unsafe { ROVolAddress::new(0x400_0130) };
+#}</code></pre></pre>
+<p>There's little to say here. It's a read only register, and the data just
+contains one bit per button. The only thing that's a little weird about it is
+that the bits follow a &quot;low active&quot; convention, so if the button is pressed then
+the bit is 0, and if the button is released the bit is 1.</p>
+<p>You <em>could</em> work with that directly, but I think it's a lot easier to think
+about having <code>true</code> for pressed and <code>false</code> for not pressed. So the <code>gba</code> crate
+flips the bits when you read the keys:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+/// Gets the current state of the keys
+pub fn read_key_input() -&gt; KeyInput {
+  KeyInput(KEYINPUT.read() ^ 0b0000_0011_1111_1111)
+}
+#}</code></pre></pre>
+<p>Now we can treat the KeyInput values like a totally normal bitset.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="the-hardware-memory-map.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="bitmap-video.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="the-hardware-memory-map.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="bitmap-video.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

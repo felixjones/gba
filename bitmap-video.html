@@ -1,0 +1,389 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Bitmap Video - Rust GBA Guide</title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li><a href="development-setup.html"><strong aria-hidden="true">1.</strong> Development Setup</a></li><li><a href="volatile.html"><strong aria-hidden="true">2.</strong> Volatile</a></li><li><a href="the-hardware-memory-map.html"><strong aria-hidden="true">3.</strong> The Hardware Memory Map</a></li><li><a href="io-registers.html"><strong aria-hidden="true">4.</strong> IO Registers</a></li><li><a href="bitmap-video.html" class="active"><strong aria-hidden="true">5.</strong> Bitmap Video</a></li><li><a href="gba-asm.html"><strong aria-hidden="true">6.</strong> GBA Assembly</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Rust GBA Guide</h1>
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1><a class="header" href="#bitmap-video" id="bitmap-video">Bitmap Video</a></h1>
+<p>Our first video modes to talk about are the bitmap video modes.</p>
+<p>It's not because they're the best and fastest, it's because they're the
+<em>simplest</em>. You can get going and practice with them really quickly. Usually
+after that you end up wanting to move on to the other video modes because they
+have better hardware support, so you can draw more complex things with the small
+number of cycles that the GBA allows.</p>
+<h2><a class="header" href="#the-three-bitmap-modes" id="the-three-bitmap-modes">The Three Bitmap Modes</a></h2>
+<p>As I said in the Hardware Memory Map section, the Video RAM lives in the address
+space at <code>0x600_0000</code>. Depending on our video mode the display controller will
+consider this memory to be in one of a few totally different formats.</p>
+<h3><a class="header" href="#mode-3" id="mode-3">Mode 3</a></h3>
+<p>The screen is 160 rows, each 240 pixels long, of <code>u16</code> color values.</p>
+<p>This is &quot;full&quot; resolution, and &quot;full&quot; color. It adds up to 76,800 bytes. VRAM is
+only 96,304 bytes total though. There's enough space left over after the bitmap
+for some object tile data if you want to use objects, but basically Mode3 is
+using all of VRAM as one huge canvas.</p>
+<h3><a class="header" href="#mode-4" id="mode-4">Mode 4</a></h3>
+<p>The screen is 160 rows, each 240 pixels long, of <code>u8</code> palette values.</p>
+<p>This has half as much space per pixel. What's a palette value? That's an index
+into the background PALRAM which says what the color of that pixel should be. We
+still have the full color space available, but we can only use 256 colors at the
+same time.</p>
+<p>What did we get in exchange for this? Well, now there's a second &quot;page&quot;. The
+second page starts <code>0xA000</code> bytes into VRAM (in both Mode 4 and Mode 5). It's an
+entire second set of pixel data. You determine if Page 0 or Page 1 is shown
+using bit 4 of DISPCNT. When you swap which page is being displayed it's called
+page flipping or flipping the page, or something like that.</p>
+<p>Having two pages is cool, but Mode 4 has a big drawback: it's part of VRAM so
+that &quot;can't write 1 byte at a time&quot; rule applies. This means that to set a
+single byte we need to read a <code>u16</code>, adjust just one side of it, and then write
+that <code>u16</code> back. We can hide the complication behind a method call, but it
+simply takes longer to do all that, so editing pixels ends up being
+unfortunately slow compared to the other bitmap modes.</p>
+<h3><a class="header" href="#mode-5" id="mode-5">Mode 5</a></h3>
+<p>The screen is 128 rows, each 160 pixels long, of <code>u16</code> color values.</p>
+<p>Mode 5 has two pages like Mode 4 does, but instead of keeping full resolution we
+keep full color. The pixels are displayed in the top left and it's just black on
+the right and bottom edges. You can use the background control registers to
+shift it around, maybe center it, but there's no way to get around the fact that
+not having full resolution is kinda awkward.</p>
+<h2><a class="header" href="#using-mode-3" id="using-mode-3">Using Mode 3</a></h2>
+<p>Let's have a look at how this comes together. We'll call this one
+<code>hello_world.rs</code>, since it's our first real program.</p>
+<h3><a class="header" href="#module-attributes-and-imports" id="module-attributes-and-imports">Module Attributes and Imports</a></h3>
+<p>At the top of our file we're still <code>no_std</code> and we're still using
+<code>feature(start)</code>, but now we're using the <code>gba</code> crate so we're 100% safe code!
+Often enough we'll need a little <code>unsafe</code>, but for just bitmap drawing we don't
+need it.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#![no_std]
+#![feature(start)]
+#![forbid(unsafe_code)]
+
+#fn main() {
+use gba::{
+  fatal,
+  io::{
+    display::{DisplayControlSetting, DisplayMode, DISPCNT, VBLANK_SCANLINE, VCOUNT},
+    keypad::read_key_input,
+  },
+  vram::bitmap::Mode3,
+  Color,
+};
+#}</code></pre></pre>
+<h3><a class="header" href="#panic-handler" id="panic-handler">Panic Handler</a></h3>
+<p>Before we had a panic handler that just looped forever. Now that we're using the
+<code>gba</code> crate we can rely on the debug output channel from <code>mGBA</code> to get a message
+into the real world. There's macros setup for each message severity, and they
+all accept a format string and arguments, like how <code>println</code> works. The catch is
+that a given message is capped at a length of 255 bytes, and it should probably
+be ASCII only.</p>
+<p>In the case of the <code>fatal</code> message level, it also halts the emulator.</p>
+<p>Of course, if the program is run on real hardware then the <code>fatal</code> message won't
+stop the program, so we still need the infinite loop there too.</p>
+<p>(not that this program <em>can</em> panic, but <code>rustc</code> doesn't know that so it demands
+we have a <code>panic_handler</code>)</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[panic_handler]
+fn panic(info: &amp;core::panic::PanicInfo) -&gt; ! {
+  // This kills the emulation with a message if we're running within mGBA.
+  fatal!(&quot;{}&quot;, info);
+  // If we're _not_ running within mGBA then we still need to not return, so
+  // loop forever doing nothing.
+  loop {}
+}
+#}</code></pre></pre>
+<h3><a class="header" href="#waiting-around" id="waiting-around">Waiting Around</a></h3>
+<p>Like I talked about before, sometimes we need to wait around a bit for the right
+moment to start doing work. However, we don't know how to do the good version of
+waiting for VBlank and VDraw to start, so we'll use the really bad version of it
+for now.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+/// Performs a busy loop until VBlank starts.
+///
+/// This is very inefficient, and please keep following the lessons until we
+/// cover how interrupts work!
+pub fn spin_until_vblank() {
+  while VCOUNT.read() &lt; VBLANK_SCANLINE {}
+}
+
+/// Performs a busy loop until VDraw starts.
+///
+/// This is very inefficient, and please keep following the lessons until we
+/// cover how interrupts work!
+pub fn spin_until_vdraw() {
+  while VCOUNT.read() &gt;= VBLANK_SCANLINE {}
+}
+#}</code></pre></pre>
+<h3><a class="header" href="#setup-in-main" id="setup-in-main">Setup in <code>main</code></a></h3>
+<p>In main we set the display control value we want and declare a few variables
+we're going to use in our primary loop.</p>
+<pre><pre class="playpen"><code class="language-rust">#[start]
+fn main(_argc: isize, _argv: *const *const u8) -&gt; isize {
+  const SETTING: DisplayControlSetting =
+    DisplayControlSetting::new().with_mode(DisplayMode::Mode3).with_bg2(true);
+  DISPCNT.write(SETTING);
+
+  let mut px = Mode3::WIDTH / 2;
+  let mut py = Mode3::HEIGHT / 2;
+  let mut color = Color::from_rgb(31, 0, 0);
+</code></pre></pre>
+<h3><a class="header" href="#stuff-during-vdraw" id="stuff-during-vdraw">Stuff During VDraw</a></h3>
+<p>When a frame starts we want to read the keys, then adjust as much of the game
+state as we can without touching VRAM.</p>
+<p>Once we're ready, we do our spin loop until VBlank starts.</p>
+<p>In this case, we're going to adjust <code>px</code> and <code>py</code> depending on the arrow pad
+input, and also we'll cycle around the color depending on L and R being pressed.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  loop {
+    // read our keys for this frame
+    let this_frame_keys = read_key_input();
+
+    // adjust game state and wait for vblank
+    px = px.wrapping_add(2 * this_frame_keys.x_tribool() as usize);
+    py = py.wrapping_add(2 * this_frame_keys.y_tribool() as usize);
+    if this_frame_keys.l() {
+      color = Color(color.0.rotate_left(5));
+    }
+    if this_frame_keys.r() {
+      color = Color(color.0.rotate_right(5));
+    }
+
+    // now we wait
+    spin_until_vblank();
+#}</code></pre></pre>
+<h3><a class="header" href="#stuff-during-vblank" id="stuff-during-vblank">Stuff During VBlank</a></h3>
+<p>When VBlank starts we want want to update video memory to display the new
+frame's situation.</p>
+<p>In our case, we're going to paint a little square of the current color, but also
+if you go off the map it resets the screen.</p>
+<p>At the end, we spin until VDraw starts so we can do the whole thing again.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    // draw the new game and wait until the next frame starts.
+    if px &gt;= Mode3::WIDTH || py &gt;= Mode3::HEIGHT {
+      // out of bounds, reset the screen and position.
+      Mode3::dma_clear_to(Color::from_rgb(0, 0, 0));
+      px = Mode3::WIDTH / 2;
+      py = Mode3::HEIGHT / 2;
+    } else {
+      // draw the new part of the line
+      Mode3::write(px, py, color);
+      Mode3::write(px, py + 1, color);
+      Mode3::write(px + 1, py, color);
+      Mode3::write(px + 1, py + 1, color);
+    }
+
+    // now we wait again
+    spin_until_vdraw();
+  }
+}
+#}</code></pre></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="io-registers.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="gba-asm.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="io-registers.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="gba-asm.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>
